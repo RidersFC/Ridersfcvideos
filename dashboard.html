@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Player Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #203a43;
+      --accent: #ff512f;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f2f2f2;
+      color: #222;
+      padding-top: 80px;
+      padding-bottom: 60px;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 70px;
+      background: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      z-index: 1000;
+    }
+
+    header img {
+      height: 45px;
+      margin-right: 15px;
+    }
+
+    header h1 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      height: 50px;
+      background: var(--primary);
+      color: #eee;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 14px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      animation: fadeInZoom 0.8s ease-in-out;
+    }
+
+    @keyframes fadeInZoom {
+      0% { opacity: 0; transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .player-profile {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .player-image {
+      width: 240px;
+      height: 320px;
+      border-radius: 12px;
+      object-fit: cover;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      margin-bottom: 15px;
+    }
+
+    .player-name {
+      font-size: 24px;
+      font-weight: 700;
+      margin: 10px 0;
+      color: #444;
+    }
+
+    .bio {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #555;
+      margin-bottom: 30px;
+    }
+
+    h2 {
+      margin-top: 30px;
+      color: #333;
+      font-size: 20px;
+      border-left: 4px solid var(--accent);
+      padding-left: 10px;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 270px;
+      object-fit: cover;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .caption {
+      padding: 8px;
+      font-size: 13px;
+      color: #444;
+      text-align: center;
+    }
+
+    .video-wrapper, .interview-wrapper {
+      margin-top: 15px;
+      background: #f9f9f9;
+      border-radius: 10px;
+      padding: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    video {
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      border-radius: 10px;
+      background: black;
+    }
+
+    .video-controls {
+      margin-top: 10px;
+    }
+
+    .video-controls button {
+      margin: 5px;
+      padding: 8px 16px;
+      background: var(--accent);
+      border: none;
+      border-radius: 20px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .video-controls button:hover {
+      background: #d12d2d;
+    }
+
+    iframe {
+      width: 100%;
+      height: 350px;
+      border: none;
+      border-radius: 10px;
+    }
+
+    @media (max-width: 600px) {
+      .player-image {
+        width: 160px;
+        height: 220px;
+      }
+      .player-name {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <img src="https://riders-fc-kwamba.vercel.app/logo.png" alt="Riders FC Logo">
+  <h1>Riders Football Club</h1>
+</header>
+
+<div class="container">
+  <div class="player-profile">
+    <img id="playerImage" class="player-image" src="" alt="Player">
+    <h1 id="playerName" class="player-name">Loading...</h1>
+    <p id="bioContent" class="bio">Loading bio...</p>
+  </div>
+
+  <div id="gallerySection">
+    <h2>Gallery</h2>
+    <div class="gallery" id="gallery"></div>
+  </div>
+
+  <div id="videosSection">
+    <h2>Videos</h2>
+    <div id="videos"></div>
+  </div>
+
+  <div id="interviewSection" class="interview-wrapper" style="display:none;">
+    <h2>Interview</h2>
+    <iframe id="interviewFrame" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  </div>
+</div>
+
+<footer>
+  &copy; 2025 Riders FC. All rights reserved.
+</footer>
+
+<!-- ✅ Only changes are marked inside the JS section -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAFsHg9fK6IDnHbuxmBleEfIIfVGsuLDik",
+    authDomain: "profile-b825d.firebaseapp.com",
+    projectId: "profile-b825d",
+    storageBucket: "profile-b825d.appspot.com",
+    messagingSenderId: "925276859161",
+    appId: "1:925276859161:web:194c60f6dbd9f1ef8bf388"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const playerId = new URLSearchParams(window.location.search).get("id");
+
+  const playerNameEl = document.getElementById("playerName");
+  const playerImageEl = document.getElementById("playerImage");
+  const bioEl = document.getElementById("bioContent");
+  const galleryEl = document.getElementById("gallery");
+  const videosEl = document.getElementById("videos");
+  const interviewSection = document.getElementById("interviewSection");
+  const interviewFrame = document.getElementById("interviewFrame");
+
+  async function loadDashboard() {
+    if (!playerId) {
+      bioEl.textContent = "Invalid player ID.";
+      return;
+    }
+
+    const playerDoc = await getDoc(doc(db, "players", playerId));
+    if (playerDoc.exists()) {
+      const player = playerDoc.data();
+      playerNameEl.textContent = player.name;
+      playerImageEl.src = player.picture;
+    }
+
+    const dashboardDoc = await getDoc(doc(db, "dashboards", playerId));
+    if (dashboardDoc.exists()) {
+      const data = dashboardDoc.data();
+      bioEl.textContent = data.bio || "No bio available.";
+
+      // ✅ Clear old content before appending new
+      galleryEl.innerHTML = "";
+      videosEl.innerHTML = "";
+      interviewFrame.src = "";
+      interviewSection.style.display = "none";
+
+      // ✅ Show full gallery images
+      (data.gallery || []).forEach((item) => {
+        const div = document.createElement("div");
+        div.className = "gallery-item";
+        div.innerHTML = `
+          <img src="${item.image}" alt="Gallery Image" />
+          <div class="caption">${item.caption}</div>
+        `;
+        galleryEl.appendChild(div);
+      });
+
+      (data.videos || []).forEach((item, index) => {
+        const div = document.createElement("div");
+        div.className = "video-wrapper";
+        div.innerHTML = `
+          <video id="video${index}" preload="metadata" controlsList="nodownload">
+            <source src="${item.videoUrl}" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+          <div class="video-controls">
+            <button onclick="document.getElementById('video${index}').play()">Play</button>
+            <button onclick="document.getElementById('video${index}').pause()">Stop</button>
+          </div>
+          <div class="caption">${item.caption}</div>
+        `;
+        videosEl.appendChild(div);
+      });
+
+      if (data.interview && data.interview.videoUrl) {
+        let url = data.interview.videoUrl.trim();
+        if (url.includes("watch?v=")) {
+          url = url.replace("watch?v=", "embed/");
+        }
+        interviewFrame.src = url;
+        interviewSection.style.display = "block";
+      }
+    } else {
+      bioEl.textContent = "No dashboard data available.";
+    }
+  }
+
+  loadDashboard();
+</script>
+
+
+</body>
+</html>

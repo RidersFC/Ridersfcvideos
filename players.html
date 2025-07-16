@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Riders FC Players Profile</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      color: white;
+    }
+
+    header {
+      background: #111;
+      padding: 20px;
+      text-align: center;
+      font-size: 2rem;
+      font-weight: bold;
+      color: #FFD700;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+    }
+
+    footer {
+      background: #111;
+      text-align: center;
+      padding: 10px;
+      color: #ccc;
+    }
+
+    .players-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .player-card {
+      background: white;
+      color: #333;
+      border-radius: 15px;
+      width: 300px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .image-wrapper {
+      position: relative;
+      width: 100%;
+      height: 350px;
+    }
+
+    .player-image {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 350px;
+      object-fit: cover;
+      transition: opacity 0.8s ease-in-out;
+    }
+
+    .player-image.back {
+      opacity: 0;
+      z-index: 0;
+    }
+
+    .player-image.front {
+      opacity: 1;
+      z-index: 1;
+    }
+
+    .player-details {
+      padding: 15px;
+      font-size: 14px;
+    }
+
+    .player-details h3 {
+      margin: 0 0 10px;
+      font-size: 24px;
+      font-weight: 800;
+      color: #111;
+    }
+
+    .explore-btn {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 10px 20px;
+      background: linear-gradient(to right, #ff512f, #dd2476);
+      color: white;
+      border-radius: 25px;
+      text-decoration: none;
+      font-weight: bold;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      transition: transform 0.2s;
+    }
+
+    .explore-btn:hover {
+      transform: scale(1.1);
+    }
+  </style>
+</head>
+<body>
+  <header>Riders Football Club</header>
+
+  <div class="players-container" id="players-container"></div>
+
+  <footer>&copy; 2025 Riders FC. All rights reserved.</footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+    import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAFsHg9fK6IDnHbuxmBleEfIIfVGsuLDik",
+      authDomain: "profile-b825d.firebaseapp.com",
+      projectId: "profile-b825d",
+      storageBucket: "profile-b825d.appspot.com",
+      messagingSenderId: "925276859161",
+      appId: "1:925276859161:web:194c60f6dbd9f1ef8bf388"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const playersContainer = document.getElementById("players-container");
+
+    async function fetchPlayers() {
+      const querySnapshot = await getDocs(collection(db, "players"));
+      querySnapshot.forEach(async (docSnap) => {
+        const data = docSnap.data();
+        const dashboardRef = doc(db, "dashboards", docSnap.id);
+        const dashboardSnap = await getDoc(dashboardRef);
+        const dashboardExists = dashboardSnap.exists();
+
+        const card = document.createElement("div");
+        card.className = "player-card";
+
+        const imageWrapper = document.createElement("div");
+        imageWrapper.className = "image-wrapper";
+
+        const frontImg = document.createElement("img");
+        frontImg.className = "player-image front";
+        frontImg.src = data.picture;
+
+        const backImg = document.createElement("img");
+        backImg.className = "player-image back";
+        backImg.src = data.backPicture || data.picture;
+
+        imageWrapper.appendChild(frontImg);
+        imageWrapper.appendChild(backImg);
+        card.appendChild(imageWrapper);
+
+        // Flip every 5 seconds
+        setInterval(() => {
+          if (frontImg.style.opacity === "1" || frontImg.style.opacity === "") {
+            frontImg.style.opacity = "0";
+            backImg.style.opacity = "1";
+          } else {
+            frontImg.style.opacity = "1";
+            backImg.style.opacity = "0";
+          }
+        }, 5000);
+
+        const details = document.createElement("div");
+        details.className = "player-details";
+        details.innerHTML = `
+          <h3>${data.name}</h3>
+          <p>DOB: ${data.dob}</p>
+          <p>Height: ${data.height}</p>
+          <p>Number: ${data.number}</p>
+          <p>Position: ${data.position}</p>
+          ${dashboardExists ? `<a href="dashboard.html?id=${docSnap.id}" target="_blank" class="explore-btn">Explore More</a>` : "<p style='color: red;'>Dashboard Coming Soon</p>"}
+        `;
+
+        card.appendChild(details);
+        playersContainer.appendChild(card);
+      });
+    }
+
+    fetchPlayers();
+  </script>
+</body>
+</html>
